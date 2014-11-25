@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-//#include <ncurses>
 #include <termios.h>
 #include "BufferToggle.cpp"
 
@@ -18,10 +17,10 @@ int main(void)
 
     try
     {
-        //Socket theSocket("10.0.2.15", 2000);
-        Socket theSocket("127.0.0.1", 2000);
+        Socket theSocket("192.168.0.16", 2000);
+        //Socket theSocket("127.0.0.1", 2000);
         theSocket.Open();
-        std::string entry = "";
+        bool quitGame = false;
         std::string dir = "";
 
 		FlexWait waiter(2, &cinWatcher, &theSocket);
@@ -44,7 +43,7 @@ int main(void)
 
 		Grid grid;
 
-        while (entry != "done")
+        while (!quitGame)
         {
             bt.off();
             Blockable* result = waiter.Wait();
@@ -72,9 +71,16 @@ int main(void)
             	case 'd':
             		dir = "RIGHT";
             		break;
+            	case 'q':
+					quitGame = true;
+					break;
             	}
                 
             }
+
+            if (quitGame)
+            	break;
+
             bt.on();
         }
 

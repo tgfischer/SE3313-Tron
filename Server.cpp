@@ -31,7 +31,7 @@ public:
         	grid.sendTo(socketA);
         	grid.sendTo(socketB);
 
-        	sleep(1);
+        	usleep(500000);
 
             int checkA = socketA.Read(dirA);
             int checkB = socketB.Read(dirB);
@@ -50,8 +50,12 @@ public:
             {
             	std::cout << dirA.ToString() << " " << dirB.ToString() << std::endl;
 
-            	if (!grid.update(dirA.ToString(), grid.p1) || !grid.update(dirB.ToString(), grid.p2))
+            	if (!grid.update(dirA.ToString(), grid.p1) || !grid.update(dirB.ToString(), grid.p2)) {
+            		grid.sendTo(socketA);
+            		grid.sendTo(socketB);
+
             		break;
+            	}
             }
         }
         std::cout << "Game Over\nThread is gracefully ending" << std::endl;
