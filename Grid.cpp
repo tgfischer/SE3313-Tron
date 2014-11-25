@@ -80,6 +80,7 @@ void Grid::sendTo(Socket& sock, std::string gameOver) {
 		}
 	}
 
+
 	sock.Write(ByteArray(gameOver));
 }
 
@@ -94,13 +95,15 @@ bool Grid::recvFrom(Socket& sock) {
 		}
 	}
 
+	std::cout << "Got it..." << std::endl;
+
 	sock.Read(byte);
 	std::string gameOver = byte.ToString();
 
-	if (gameOver != "NO") {
+	//if (gameOver != "NO") {
 		std::cout << gameOver << std::endl;
-		return false;
-	}
+		//return false;
+	//}
 
 	return true;
 }

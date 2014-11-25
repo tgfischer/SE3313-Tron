@@ -50,14 +50,15 @@ int main(void)
             Blockable* result = waiter.Wait();
 
             if (result == &theSocket) {
-            	quitGame = !grid.recvFrom(theSocket);
+            	grid.recvFrom(theSocket);
+				theSocket.Write(ByteArray(dir));
+				quitGame = !grid.recvFrom(theSocket);
 
 				clear();
 
+
 				grid.draw();
-				theSocket.Write(ByteArray(dir));
             } else {
-                
             	switch(getchar()) {
             	case 'w':
             		dir = "UP";
@@ -75,7 +76,6 @@ int main(void)
 					quitGame = true;
 					break;
             	}
-                
             }
 
             if (quitGame)

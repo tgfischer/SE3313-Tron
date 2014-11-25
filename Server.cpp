@@ -32,8 +32,6 @@ public:
         	grid.sendTo(socketA);
         	grid.sendTo(socketB);
 
-        	usleep(500000);
-
         	int checkA = socketA.Read(dirA);
         	int checkB = socketB.Read(dirB);
 
@@ -62,17 +60,20 @@ public:
 					} else if (!p2) {
 						message = "P1 WINS!";
 					}
-
-					grid.sendTo(socketA);
-					grid.sendTo(socketB);
             	}
+
+            	grid.sendTo(socketA, message);
+            	grid.sendTo(socketB, message);
             }
 
             if (message != "NO") {
             	std::cout << message << std::endl;
             	break;
             }
+
+            usleep(500000);
         }
+
         std::cout << "Game Over\nThread is gracefully ending" << std::endl;
     }
 
