@@ -98,10 +98,10 @@ bool Grid::recvFrom(Socket& sock) {
 	sock.Read(byte);
 	std::string gameOver = byte.ToString();
 
-	//if (gameOver != "NO") {
+	if (gameOver != "NO") {
 		std::cout << gameOver << std::endl;
-		//return false;
-	//}
+		return false;
+	}
 
 	return true;
 }
