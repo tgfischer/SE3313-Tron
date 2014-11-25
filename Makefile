@@ -1,11 +1,11 @@
-Client : Client.o socket.o Blockable.o
-	g++ -o Client Client.o socket.o Blockable.o -pthread -l rt
+Client : Client.o socket.o Blockable.o Grid.o Player.o
+	g++ -o Client Client.o socket.o Blockable.o Grid.o Player.o -pthread -l rt
 
 Client.o : Client.cpp SharedObject.h Semaphore.h
 	g++ -c Client.cpp 
 
-Server : Server.o thread.o socket.o socketserver.o Blockable.o
-	g++ -o Server Server.o thread.o socket.o socketserver.o Blockable.o -pthread -l rt
+Server : Server.o thread.o socket.o socketserver.o Blockable.o Grid.o Player.o
+	g++ -o Server Server.o thread.o socket.o socketserver.o Blockable.o Grid.o Player.o -pthread -l rt
 
 Blockable.o : Blockable.h Blockable.cpp
 	g++ -c Blockable.cpp
@@ -21,3 +21,9 @@ socket.o : socket.cpp socket.h
 
 socketserver.o : socketserver.cpp socket.h socketserver.h
 	g++ -c socketserver.cpp
+	
+Grid.o : Grid.cpp Grid.h
+	g++ -c Grid.cpp
+	
+Player.o : Player.cpp Player.h
+	g++ -c Player.cpp

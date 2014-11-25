@@ -1,6 +1,7 @@
 #include "SharedObject.h"
 #include "Semaphore.h"
 #include "thread.h"
+#include "Grid.h"
 #include "socketserver.h"
 #include <stdlib.h>
 #include <time.h>
@@ -13,43 +14,57 @@ class CommThread : public Thread
 private:
     Socket socketA, socketB;
 public:
-    CommThread(Socket const& A, Socket const& B) : Thread(true), socketA(A)
+    CommThread(Socket const& A, Socket const& B) : Thread(true), socketA(A), socketB(B)
     {
         ;
     }
 
     long ThreadMain(void)
     {
-        ByteArray bytes;
+        ByteArray dirA, dirB;
         std::cout << "Created a socket thread!" << std::endl;
-        for(;;)
+
+        Grid grid;
+
+        while(true)
         {
-            int read = socketA.Read(bytes);
-            if (read == -1)
+        	grid.sendTo(socketA);
+        	grid.sendTo(socketB);
+
+        	sleep(1);
+
+            int checkA = socketA.Read(dirA);
+            int checkB = socketB.Read(dirB);
+
+
+            if (checkA == -1 || checkB == -1)
             {
                 std::cout << "Error in socket detected" << std::endl;
                 break;
             }
-            else if (read == 0)
+            else if (checkA == 0 || checkB == 0)
             {
                 std::cout << "Socket closed at remote end" << std::endl;
                 break;
             }
             else
             {
-                std::string theString = bytes.ToString();
-                std::cout << "Received: " << theString << std::endl;
-                bytes.v[0]='R';
-                socketA.Write(bytes);
+            	std::cout << dirA.ToString() << " " << dirB.ToString() << std::endl;
+
+            	if (!grid.update(dirA.ToString(), grid.p1) || !grid.update(dirB.ToString(), grid.p2))
+            		break;
             }
         }
-        std::cout << "Thread is gracefully ending" << std::endl;
+        std::cout << "Game Over\nThread is gracefully ending" << std::endl;
     }
+
     ~CommThread(void)
     {
-        theSocket.Write(ByteArray("done"));
+        socketA.Write(ByteArray("done"));
+        socketB.Write(ByteArray("done"));
         terminationEvent.Wait();
-        theSocket.Close();
+        socketA.Close();
+        socketB.Close();
     }
 };
 
@@ -59,11 +74,11 @@ int main(void)
     SocketServer theServer(2000);
     std::vector<CommThread *> threads;
 
-    for(;;)
+    while(true)
     {
         try
         {
-            FlexWait waiter(2,&theServer,&cinWatcher);
+            FlexWait waiter(2, &theServer, &cinWatcher);
             Blockable * result = waiter.Wait();
             if (result == &cinWatcher)
             {
@@ -77,10 +92,20 @@ int main(void)
                 else
                     continue;
             }
+
+            std::cout << "\nWaiting for 2 new clients..." << std::endl;
+
             // Accept should not now block.
-            Socket newSocket = theServer.Accept();
-            std::cout << "Received a socket connection!" << std::endl;
-            threads.push_back(new CommThread(newSocket));
+            Socket socketA = theServer.Accept();
+            std::cout << "Received a socket connection from client 1" << std::endl;
+            socketA.Write(ByteArray("WAIT"));
+
+            Socket socketB = theServer.Accept();
+            std::cout << "Received a socket connection from client 2" << std::endl;
+
+            socketA.Write(ByteArray("GO"));
+            socketB.Write(ByteArray("GO"));
+            threads.push_back(new CommThread(socketA, socketB));
         }
         catch(TerminationException e)
         {
