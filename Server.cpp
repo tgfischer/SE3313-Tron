@@ -70,8 +70,6 @@ public:
             	std::cout << message << std::endl;
             	break;
             }
-
-            usleep(500000);
         }
 
         std::cout << "Game Over\nThread is gracefully ending" << std::endl;

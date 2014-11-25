@@ -21,7 +21,7 @@ public:
 
 	bool update(std::string dir, Player& p);
 	void sendTo(Socket& sock, std::string gameOver = "NO");
-	bool recvFrom(Socket& sock);
+	std::string recvFrom(Socket& sock);
 	void draw();
 
 	const static int cols = 24;

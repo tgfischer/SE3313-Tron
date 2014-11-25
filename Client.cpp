@@ -20,7 +20,7 @@ int main(void)
         Socket theSocket("192.168.0.16", 2000);
         //Socket theSocket("127.0.0.1", 2000);
         theSocket.Open();
-        bool quitGame = false;
+        std::string quitGame = "NO";
         std::string dir = "";
 
 		FlexWait waiter(2, &cinWatcher, &theSocket);
@@ -45,14 +45,14 @@ int main(void)
 
 		bt.off();
 
-        while (!quitGame)
+        while (quitGame == "NO")
         {
             Blockable* result = waiter.Wait();
 
             if (result == &theSocket) {
             	grid.recvFrom(theSocket);
 				theSocket.Write(ByteArray(dir));
-				quitGame = !grid.recvFrom(theSocket);
+				quitGame = grid.recvFrom(theSocket);
 
 				clear();
 
@@ -76,14 +76,11 @@ int main(void)
 					break;
             	}
             }
-
-            if (quitGame)
-            	break;
         }
 
         bt.on();
 
-        std::cout << "Sleep now" << std::endl;
+        std::cout << quitGame << std::endl;
         theSocket.Close();
         sleep(1);
     }
