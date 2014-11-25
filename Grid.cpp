@@ -95,8 +95,6 @@ bool Grid::recvFrom(Socket& sock) {
 		}
 	}
 
-	std::cout << "Got it..." << std::endl;
-
 	sock.Read(byte);
 	std::string gameOver = byte.ToString();
 

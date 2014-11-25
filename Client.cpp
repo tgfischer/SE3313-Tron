@@ -56,7 +56,6 @@ int main(void)
 
 				clear();
 
-
 				grid.draw();
             } else {
             	switch(getchar()) {
