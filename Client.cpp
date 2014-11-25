@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <ncurses>
 
 #define clear() printf("\033[H\033[J");
 
@@ -41,36 +42,33 @@ int main(void)
 
         while (entry != "done")
         {
-        	grid.recvFrom(theSocket);
-
-        	clear();
-
-        	grid.draw();
-
-            theSocket.Write(ByteArray(dir));
-
             Blockable* result = waiter.Wait();
 
-            if (result != &theSocket)
-            {
-                std::cin >> entry;
-                ByteArray ba(std::string(1, *entry.rbegin()));
-                int written = theSocket.Write(ba);
+            if (result == &theSocket) {
+            	grid.recvFrom(theSocket);
 
-                if ( written != ba.v.size()) {
-                    std::cout << "Wrote: " << written << std::endl;
-                    std::cout << "The socket appears to have been closed suddenly" << std::endl;
-                    break;
-                } else {
-                    std::cout << "Sent: " << entry << std::endl;
-                }
+				clear();
 
-                if (theSocket.Read(ba) <= 0) {
-                    std::cout << "The socket appears to have been closed suddenly" << std::endl;
-                    break;
-                }
+				grid.draw();
 
-                std::cout << "Received: " << ba.ToString() << std::endl;
+				theSocket.Write(ByteArray(dir));
+            } else {
+            	int entry;
+
+            	switch(getc(stdin)) {
+            	case 'w':
+            		dir = "UP";
+            		break;
+            	case 'a':
+            		dir = "LEFT";
+            		break;
+            	case 's':
+            		dir = "DOWN";
+            		break;
+            	case 'd':
+            		dir = "RIGHT";
+            		break;
+            	}
             }
         }
 

@@ -79,8 +79,6 @@ void Grid::sendTo(Socket& sock) {
 			sock.Read(returned);
 		}
 	}
-
-	std::cout << "Sent All" << std::endl;
 }
 
 void Grid::recvFrom(Socket& sock) {
@@ -93,8 +91,6 @@ void Grid::recvFrom(Socket& sock) {
 			sock.Write(ByteArray("Got it"));
 		}
 	}
-
-	std::cout << "Received All" << std::endl;
 }
 
 /**

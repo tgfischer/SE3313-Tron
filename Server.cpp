@@ -36,7 +36,6 @@ public:
             int checkA = socketA.Read(dirA);
             int checkB = socketB.Read(dirB);
 
-
             if (checkA == -1 || checkB == -1)
             {
                 std::cout << "Error in socket detected" << std::endl;
