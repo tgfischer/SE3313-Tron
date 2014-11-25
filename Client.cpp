@@ -43,18 +43,18 @@ int main(void)
 
 		Grid grid;
 
+		bt.off();
+
         while (!quitGame)
         {
-            bt.off();
             Blockable* result = waiter.Wait();
 
             if (result == &theSocket) {
-            	grid.recvFrom(theSocket);
+            	quitGame = !grid.recvFrom(theSocket);
 
 				clear();
 
 				grid.draw();
-
 				theSocket.Write(ByteArray(dir));
             } else {
                 
@@ -80,9 +80,9 @@ int main(void)
 
             if (quitGame)
             	break;
-
-            bt.on();
         }
+
+        bt.on();
 
         std::cout << "Sleep now" << std::endl;
         theSocket.Close();

@@ -70,7 +70,7 @@ bool Grid::update(std::string dir, Player& p) {
 	return true;
 }
 
-void Grid::sendTo(Socket& sock) {
+void Grid::sendTo(Socket& sock, std::string gameOver) {
 	ByteArray returned;
 
 	for (int i = 0; i < this->cols; i++) {
@@ -79,9 +79,11 @@ void Grid::sendTo(Socket& sock) {
 			sock.Read(returned);
 		}
 	}
+
+	sock.Write(ByteArray(gameOver));
 }
 
-void Grid::recvFrom(Socket& sock) {
+bool Grid::recvFrom(Socket& sock) {
 	ByteArray byte;
 
 	for (int i = 0; i < this->cols; i++) {
@@ -91,6 +93,16 @@ void Grid::recvFrom(Socket& sock) {
 			sock.Write(ByteArray("Got it"));
 		}
 	}
+
+	sock.Read(byte);
+	std::string gameOver = byte.ToString();
+
+	if (gameOver != "NO") {
+		std::cout << gameOver << std::endl;
+		return false;
+	}
+
+	return true;
 }
 
 /**

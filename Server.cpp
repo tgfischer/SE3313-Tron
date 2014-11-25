@@ -22,9 +22,10 @@ public:
     long ThreadMain(void)
     {
         ByteArray dirA, dirB;
-        std::cout << "Created a socket thread!" << std::endl;
-
+        std::string message = "NO";
         Grid grid;
+
+        std::cout << "Created a socket thread!" << std::endl;
 
         while(true)
         {
@@ -33,8 +34,8 @@ public:
 
         	usleep(500000);
 
-            int checkA = socketA.Read(dirA);
-            int checkB = socketB.Read(dirB);
+        	int checkA = socketA.Read(dirA);
+        	int checkB = socketB.Read(dirB);
 
             if (checkA == -1 || checkB == -1)
             {
@@ -50,12 +51,26 @@ public:
             {
             	std::cout << dirA.ToString() << " " << dirB.ToString() << std::endl;
 
-            	if (!grid.update(dirA.ToString(), grid.p1) || !grid.update(dirB.ToString(), grid.p2)) {
-            		grid.sendTo(socketA);
-            		grid.sendTo(socketB);
+            	bool p1 = grid.update(dirA.ToString(), grid.p1);
+            	bool p2 = grid.update(dirB.ToString(), grid.p2);
 
-            		break;
+            	if (!p1 || !p2) {
+					if (!p1 && !p2) {
+						message = "DRAW!";
+					} else if (!p1) {
+						message = "P2 WINS!";
+					} else if (!p2) {
+						message = "P1 WINS!";
+					}
+
+					grid.sendTo(socketA);
+					grid.sendTo(socketB);
             	}
+            }
+
+            if (message != "NO") {
+            	std::cout << message << std::endl;
+            	break;
             }
         }
         std::cout << "Game Over\nThread is gracefully ending" << std::endl;

@@ -20,8 +20,8 @@ public:
 	Player p1, p2;
 
 	bool update(std::string dir, Player& p);
-	void sendTo(Socket& sock);
-	void recvFrom(Socket& sock);
+	void sendTo(Socket& sock, std::string gameOver = "NO");
+	bool recvFrom(Socket& sock);
 	void draw();
 
 	const static int cols = 24;
