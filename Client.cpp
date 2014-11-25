@@ -25,19 +25,24 @@ int main(void)
 
 		FlexWait waiter(2, &cinWatcher, &theSocket);
 
+		std::string ready = "NO";
 
-		ByteArray message;
-		theSocket.Read(message);
-
-		if (message.ToString() == "WAIT") {
-			std::cout << "Waiting for another player to join..." << std::endl;
-			dir = "RIGHT";
-
+		while (ready == "NO") {
+			ByteArray message;
 			theSocket.Read(message);
-		}
 
-		if (dir != "RIGHT")
-			dir = "LEFT";
+			if (message.ToString() == "LEFT" || message.ToString() == "RIGHT") {
+				dir = message.ToString();
+				ready = "YES";
+			} else if (message.ToString() == "WAIT") {
+				std::cout << "Waiting for another player to join..." << std::endl;
+
+				theSocket.Read(message);
+				theSocket.Write(ByteArray("STILL_HERE"));
+			} else {
+
+			}
+		}
 
 		std::cout << "Ready!" << std::endl;
 

@@ -90,9 +90,12 @@ int main(void)
     std::cout << "I am a socket server.  Type 'quit' to exit" << std::endl;
     SocketServer theServer(2000);
     std::vector<CommThread *> threads;
+    std::vector<Socket> sockets;
 
     while(true)
     {
+    	ByteArray msg_recv;
+
         try
         {
             FlexWait waiter(2, &theServer, &cinWatcher);
@@ -112,17 +115,32 @@ int main(void)
 
             std::cout << "\nWaiting for 2 new clients..." << std::endl;
 
-            // Accept should not now block.
-            Socket socketA = theServer.Accept();
-            std::cout << "Received a socket connection from client 1" << std::endl;
-            socketA.Write(ByteArray("WAIT"));
+            while (true) {
+				// Accept should not now block.
+				Socket sock = theServer.Accept();
+				std::cout << "Received a socket connection from a client" << std::endl;
 
-            Socket socketB = theServer.Accept();
-            std::cout << "Received a socket connection from client 2" << std::endl;
+				if (sockets.size() > 0) {
+					sockets.front().Write(ByteArray("CHECK"));
+					int check = sockets.front().Read(msg_recv);
 
-            socketA.Write(ByteArray("GO"));
-            socketB.Write(ByteArray("GO"));
-            threads.push_back(new CommThread(socketA, socketB));
+					if (check == 0) {
+						std::cout << "First client disconnected. Trying to find another client" << std::endl;
+
+						sockets.clear();
+						sock.Write(ByteArray("WAIT"));
+						sockets.push_back(sock);
+					} else {
+						sockets.front().Write(ByteArray("RIGHT"));
+						sock.Write(ByteArray("LEFT"));
+						threads.push_back(new CommThread(sockets.at(0), sock));
+						sockets.clear();
+					}
+				} else {
+					sock.Write(ByteArray("WAIT"));
+					sockets.push_back(sock);
+				}
+            }
         }
         catch(TerminationException e)
         {
