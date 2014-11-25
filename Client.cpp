@@ -6,12 +6,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <ncurses>
+//#include <ncurses>
+#include <termios.h>
+#include "BufferToggle.cpp"
 
 #define clear() printf("\033[H\033[J");
 
 int main(void)
 {
+    BufferToggle bt;
+
     try
     {
         //Socket theSocket("10.0.2.15", 2000);
@@ -42,6 +46,7 @@ int main(void)
 
         while (entry != "done")
         {
+            bt.off();
             Blockable* result = waiter.Wait();
 
             if (result == &theSocket) {
@@ -53,9 +58,8 @@ int main(void)
 
 				theSocket.Write(ByteArray(dir));
             } else {
-            	int entry;
-
-            	switch(getc(stdin)) {
+                
+            	switch(getchar()) {
             	case 'w':
             		dir = "UP";
             		break;
@@ -69,7 +73,9 @@ int main(void)
             		dir = "RIGHT";
             		break;
             	}
+                
             }
+            bt.on();
         }
 
         std::cout << "Sleep now" << std::endl;

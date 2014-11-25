@@ -1,7 +1,7 @@
 Client : Client.o socket.o Blockable.o Grid.o Player.o
 	g++ -o Client Client.o socket.o Blockable.o Grid.o Player.o -pthread -l rt
 
-Client.o : Client.cpp SharedObject.h Semaphore.h
+Client.o : Client.cpp SharedObject.h Semaphore.h BufferToggle.cpp
 	g++ -c Client.cpp 
 
 Server : Server.o thread.o socket.o socketserver.o Blockable.o Grid.o Player.o
@@ -27,3 +27,4 @@ Grid.o : Grid.cpp Grid.h
 	
 Player.o : Player.cpp Player.h
 	g++ -c Player.cpp
+
