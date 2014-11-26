@@ -49,8 +49,8 @@ public:
             {
             	std::cout << dirA.ToString() << " " << dirB.ToString() << std::endl;
 
-            	bool p1 = grid.update(dirA.ToString(), grid.p1);
-            	bool p2 = grid.update(dirB.ToString(), grid.p2);
+            	bool p1 = grid.check(dirA.ToString(), grid.p1);
+            	bool p2 = grid.check(dirB.ToString(), grid.p2);
 
             	if (!p1 || !p2) {
 					if (!p1 && !p2) {
@@ -60,6 +60,9 @@ public:
 					} else if (!p2) {
 						message = "P1 WINS!";
 					}
+            	} else {
+            		grid.update(dirA.ToString(), grid.p1);
+            		grid.update(dirB.ToString(), grid.p2);
             	}
 
             	grid.sendTo(socketA, message);

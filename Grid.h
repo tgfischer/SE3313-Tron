@@ -19,7 +19,8 @@ public:
 
 	Player p1, p2;
 
-	bool update(std::string dir, Player& p);
+	bool check(std::string dir, Player& p);
+	void update(std::string dir, Player& p);
 	void sendTo(Socket& sock, std::string gameOver = "NO");
 	std::string recvFrom(Socket& sock);
 	void draw();

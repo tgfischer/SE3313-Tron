@@ -42,32 +42,33 @@ void Grid::initialize() {
 /**
  * Checks for collisions. If there are none, put the player in that cell
  */
-bool Grid::update(std::string dir, Player& p) {
-	if (dir == "DOWN") {
-		if (p.y + 1 >= this->rows || this->_grid[p.x][p.y + 1] != ' ')
-			return false;
-
-		this->_grid[p.x][++p.y] = p.value;
-	} else if (dir == "RIGHT") {
-		if (p.x + 1 >= this->cols || this->_grid[p.x + 1][p.y] != ' ')
-			return false;
-
-		this->_grid[++p.x][p.y] = p.value;
-	} else if (dir == "UP") {
-		if (p.y - 1 < 0 || this->_grid[p.x][p.y - 1] != ' ')
-			return false;
-
-		this->_grid[p.x][--p.y] = p.value;
-	} else if (dir == "LEFT") {
-		if (p.x - 1 < 0 || this->_grid[p.x - 1][p.y] != ' ')
-			return false;
-
-		this->_grid[--p.x][p.y] = p.value;
-	} else {
+bool Grid::check(std::string dir, Player& p) {
+	if (dir == "DOWN" && (p.y + 1 >= this->rows || this->_grid[p.x][p.y + 1] != ' ')) {
+		return false;
+	} else if (dir == "RIGHT" && (p.x + 1 >= this->cols || this->_grid[p.x + 1][p.y] != ' ')) {
+		return false;
+	} else if (dir == "UP" && (p.y - 1 < 0 || this->_grid[p.x][p.y - 1] != ' ')) {
+		return false;
+	} else if (dir == "LEFT" && (p.x - 1 < 0 || this->_grid[p.x - 1][p.y] != ' ')) {
 		return false;
 	}
 
 	return true;
+}
+
+/**
+ * Checks for collisions. If there are none, put the player in that cell
+ */
+void Grid::update(std::string dir, Player& p) {
+	if (dir == "DOWN") {
+		this->_grid[p.x][++p.y] = p.value;
+	} else if (dir == "RIGHT") {
+		this->_grid[++p.x][p.y] = p.value;
+	} else if (dir == "UP") {
+		this->_grid[p.x][--p.y] = p.value;
+	} else if (dir == "LEFT") {
+		this->_grid[--p.x][p.y] = p.value;
+	}
 }
 
 void Grid::sendTo(Socket& sock, std::string gameOver) {
