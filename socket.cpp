@@ -56,7 +56,8 @@ int Socket::Open(void)
     int connectReturn = connect(GetFD(),(sockaddr*)&socketDescriptor,sizeof(socketDescriptor));
     if (connectReturn != 0)
     {
-        throw std::string("Unable to open connection " + errno);
+    	strerror(errno);
+        throw std::string("Unable to open connection ");
     }
     open = true;
 }
