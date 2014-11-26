@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <iostream>
 #include <errno.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "socket.h"
 
@@ -54,7 +56,7 @@ int Socket::Open(void)
     int connectReturn = connect(GetFD(),(sockaddr*)&socketDescriptor,sizeof(socketDescriptor));
     if (connectReturn != 0)
     {
-        throw std::string("Unable to open connection");
+        throw std::string("Unable to open connection " + errno);
     }
     open = true;
 }
