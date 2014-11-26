@@ -22,7 +22,9 @@ public:
 	bool check(std::string dir, Player& p);
 	void update(std::string dir, Player& p);
 	void sendTo(Socket& sock, std::string gameOver = "NO");
+	void sendSingleTo(Socket& sock, std::string gameOver ="NO");
 	std::string recvFrom(Socket& sock);
+	std::string recvSingleFrom(Socket& sock);
 	void draw();
 
 	const static int cols = 24;
@@ -30,6 +32,8 @@ public:
 
 private:
 	char** _grid;
+
+	std::string to_string(int value);
 
 	void initialize();
 };

@@ -8,6 +8,8 @@
 #include "Grid.h"
 #include <math.h>
 #include <iostream>
+#include <stdlib.h>
+#include <sstream>
 
 Grid::Grid()
 : p1((int)floor(this->cols / 4), (int)floor(this->rows / 2), '1'),
@@ -84,6 +86,26 @@ void Grid::sendTo(Socket& sock, std::string gameOver) {
 	sock.Write(ByteArray(gameOver));
 }
 
+void Grid::sendSingleTo(Socket& sock, std::string gameOver) {
+	ByteArray returned;
+	char buf[33];
+
+	sock.Write(ByteArray(this->to_string(this->p1.x)));
+	sock.Read(returned);
+	sock.Write(ByteArray(this->to_string(this->p1.y)));
+	sock.Read(returned);
+	sock.Write(ByteArray(this->to_string(this->p1.value)));
+	sock.Read(returned);
+	sock.Write(ByteArray(this->to_string(this->p2.x)));
+	sock.Read(returned);
+	sock.Write(ByteArray(this->to_string(this->p2.y)));
+	sock.Read(returned);
+	sock.Write(ByteArray(this->to_string(this->p2.value)));
+	sock.Read(returned);
+	sock.Write(ByteArray(gameOver));
+	sock.Read(returned);
+}
+
 std::string Grid::recvFrom(Socket& sock) {
 	ByteArray byte;
 
@@ -97,6 +119,26 @@ std::string Grid::recvFrom(Socket& sock) {
 
 	sock.Read(byte);
 	return byte.ToString();
+}
+
+std::string Grid::recvSingleFrom(Socket& sock) {
+	ByteArray x, y, value, gameOver;
+
+	for (int i = 0; i < 2; i++) {
+		sock.Read(x);
+		sock.Write(ByteArray("RECEIVED"));
+		sock.Read(y);
+		sock.Write(ByteArray("RECEIVED"));
+		sock.Read(value);
+		sock.Write(ByteArray("RECEIVED"));
+
+		this->_grid[atoi(x.ToString().c_str())][atoi(y.ToString().c_str())] = value.ToString()[0];
+	}
+
+	sock.Read(gameOver);
+	sock.Write(ByteArray("RECEIVED"));
+
+	return gameOver.ToString();
 }
 
 /**
@@ -128,4 +170,16 @@ void Grid::draw() {
 		}
 
 	std::cout << "+" << std::endl;
+}
+
+std::string Grid::to_string(int value)
+{
+  //create an output string stream
+  std::ostringstream os ;
+
+  //throw the value into the string stream
+  os << value ;
+
+  //convert the string stream into a string and return
+  return os.str() ;
 }

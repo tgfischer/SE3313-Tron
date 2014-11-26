@@ -1,4 +1,6 @@
 #include <termios.h>
+#include <unistd.h>
+
 class BufferToggle
 {
     private:

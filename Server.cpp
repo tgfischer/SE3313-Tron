@@ -13,6 +13,7 @@ class CommThread : public Thread
 {
 private:
     Socket socketA, socketB;
+    const static int sleepTime = 5000;
 public:
     CommThread(Socket const& A, Socket const& B) : Thread(true), socketA(A), socketB(B)
     {
@@ -27,10 +28,15 @@ public:
 
         std::cout << "Created a socket thread!" << std::endl;
 
+        grid.sendTo(socketA);
+        grid.sendTo(socketB);
+
+        usleep(sleepTime);
+
         while(true)
         {
-        	grid.sendTo(socketA);
-        	grid.sendTo(socketB);
+        	grid.sendSingleTo(socketA);
+        	grid.sendSingleTo(socketB);
 
         	int checkA = socketA.Read(dirA);
         	int checkB = socketB.Read(dirB);
@@ -65,14 +71,16 @@ public:
             		grid.update(dirB.ToString(), grid.p2);
             	}
 
-            	grid.sendTo(socketA, message);
-            	grid.sendTo(socketB, message);
+            	grid.sendSingleTo(socketA, message);
+            	grid.sendSingleTo(socketB, message);
             }
 
             if (message != "NO") {
             	std::cout << message << std::endl;
             	break;
             }
+
+            usleep(sleepTime);
         }
 
         grid.sendTo(socketA, message);
