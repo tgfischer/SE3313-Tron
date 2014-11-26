@@ -35,15 +35,14 @@ public:
         	int checkA = socketA.Read(dirA);
         	int checkB = socketB.Read(dirB);
 
-            if (checkA == -1 || checkB == -1)
-            {
-                std::cout << "Error in socket detected" << std::endl;
+            if (checkA == -1 || checkB == -1) {
+            	message = "Error in socket detected";
+                std::cout << message << std::endl;
                 break;
             }
-            else if (checkA == 0 || checkB == 0)
-            {
-
-                std::cout << "Socket closed at remote end" << std::endl;
+            else if (checkA == 0 || checkB == 0) {
+            	message = "Socket closed at remote end";
+                std::cout << message << std::endl;
                 break;
             }
             else
@@ -72,6 +71,9 @@ public:
             	break;
             }
         }
+
+        grid.sendTo(socketA, message);
+        grid.sendTo(socketB, message);
 
         socketA.Close();
         socketB.Close();
@@ -154,15 +156,13 @@ int main(void)
 		}
     }
 
-	for(int i = 0; i < sockets.size(); i++) {
+	for (int i = 0; i < sockets.size(); i++) {
 		sockets.at(i).Close();
 	}
 
-    for (int i=0;i<threads.size();i++)
+    for (int i = 0; i < threads.size(); i++) {
         delete threads[i];
+    }
 
-    std::cout << "Sleep now" << std::endl;
-    sleep(1);
-    std::cout << "End of main" << std::endl;
-
+    std::cout << "Goodbye" << std::endl;
 }

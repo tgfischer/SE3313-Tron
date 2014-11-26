@@ -18,10 +18,11 @@ int main(void)
     try
     {
         Socket theSocket("192.168.0.16", 2000);
-        //Socket theSocket("127.0.0.1", 2000);
+        //Socket theSocket("192.168.0.12", 2000);
         theSocket.Open();
         std::string quitGame = "NO";
         std::string dir = "";
+        int code;
 
 		FlexWait waiter(2, &cinWatcher, &theSocket);
 
@@ -29,7 +30,12 @@ int main(void)
 
 		while (ready == "NO") {
 			ByteArray message;
-			theSocket.Read(message);
+			code = theSocket.Read(message);
+
+			if (code == 0) {
+				std::cout << "Server was closed. Terminating process" << std::endl;
+				break;
+			}
 
 			if (message.ToString() == "LEFT" || message.ToString() == "RIGHT") {
 				dir = message.ToString();
@@ -44,50 +50,51 @@ int main(void)
 			}
 		}
 
-		std::cout << "Ready!" << std::endl;
+		if (code != 0) {
+			std::cout << "Ready!" << std::endl;
 
-		Grid grid;
+			Grid grid;
 
-		bt.off();
+			bt.off();
 
-        while (quitGame == "NO")
-        {
-            Blockable* result = waiter.Wait();
+			while (quitGame == "NO")
+			{
+				Blockable* result = waiter.Wait();
 
-            if (result == &theSocket) {
-            	grid.recvFrom(theSocket);
-				theSocket.Write(ByteArray(dir));
-				quitGame = grid.recvFrom(theSocket);
+				if (result == &theSocket) {
+					grid.recvFrom(theSocket);
+					theSocket.Write(ByteArray(dir));
+					quitGame = grid.recvFrom(theSocket);
 
-				clear();
+					clear();
 
-				grid.draw();
-            } else {
-            	switch(getchar()) {
-            	case 'w':
-            		dir = "UP";
-            		break;
-            	case 'a':
-            		dir = "LEFT";
-            		break;
-            	case 's':
-            		dir = "DOWN";
-            		break;
-            	case 'd':
-            		dir = "RIGHT";
-            		break;
-            	case 'q':
-					quitGame = true;
-					break;
-            	}
-            }
-        }
+					grid.draw();
+				} else {
+					switch(getchar()) {
+					case 'w':
+						dir = "UP";
+						break;
+					case 'a':
+						dir = "LEFT";
+						break;
+					case 's':
+						dir = "DOWN";
+						break;
+					case 'd':
+						dir = "RIGHT";
+						break;
+					case 'q':
+						quitGame = "USER QUIT";
+						break;
+					}
+				}
+			}
 
-        bt.on();
+			bt.on();
 
-        std::cout << quitGame << std::endl;
-        theSocket.Close();
-        sleep(1);
+			std::cout << quitGame << std::endl;
+			theSocket.Close();
+		}
     }
     catch(std::string s)
     {
