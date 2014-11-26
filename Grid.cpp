@@ -88,19 +88,21 @@ void Grid::sendTo(Socket& sock, std::string gameOver) {
 
 void Grid::sendSingleTo(Socket& sock, std::string gameOver) {
 	ByteArray returned;
+	std::string p1(1, this->p1.value);
+	std::string p2(1, this->p2.value);
 	char buf[33];
 
 	sock.Write(ByteArray(this->to_string(this->p1.x)));
 	sock.Read(returned);
 	sock.Write(ByteArray(this->to_string(this->p1.y)));
 	sock.Read(returned);
-	sock.Write(ByteArray(this->to_string(this->p1.value)));
+	sock.Write(ByteArray(p1));
 	sock.Read(returned);
 	sock.Write(ByteArray(this->to_string(this->p2.x)));
 	sock.Read(returned);
 	sock.Write(ByteArray(this->to_string(this->p2.y)));
 	sock.Read(returned);
-	sock.Write(ByteArray(this->to_string(this->p2.value)));
+	sock.Write(ByteArray(p2));
 	sock.Read(returned);
 	sock.Write(ByteArray(gameOver));
 	sock.Read(returned);

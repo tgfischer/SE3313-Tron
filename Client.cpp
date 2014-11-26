@@ -54,7 +54,9 @@ int main(void)
 			std::cout << "Ready!" << std::endl;
 
 			Grid grid;
-			grid.recvFrom(theSocket);
+
+			clear();
+			grid.draw();
 
 			bt.off();
 

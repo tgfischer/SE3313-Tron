@@ -13,7 +13,7 @@ class CommThread : public Thread
 {
 private:
     Socket socketA, socketB;
-    const static int sleepTime = 5000;
+    const static int sleepTime = 500000;
 public:
     CommThread(Socket const& A, Socket const& B) : Thread(true), socketA(A), socketB(B)
     {
@@ -27,9 +27,6 @@ public:
         Grid grid;
 
         std::cout << "Created a socket thread!" << std::endl;
-
-        grid.sendTo(socketA);
-        grid.sendTo(socketB);
 
         usleep(sleepTime);
 
