@@ -57,6 +57,7 @@ int Socket::Open(void)
     if (connectReturn != 0)
     {
     	strerror(errno);
+    	perror("connect");
         throw std::string("Unable to open connection ");
     }
     open = true;
