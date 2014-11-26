@@ -42,6 +42,7 @@ public:
             }
             else if (checkA == 0 || checkB == 0)
             {
+
                 std::cout << "Socket closed at remote end" << std::endl;
                 break;
             }
@@ -72,6 +73,8 @@ public:
             }
         }
 
+        socketA.Close();
+        socketB.Close();
         std::cout << "Game Over\nThread is gracefully ending" << std::endl;
     }
 
@@ -91,73 +94,70 @@ int main(void)
     SocketServer theServer(2000);
     std::vector<CommThread *> threads;
     std::vector<Socket> sockets;
+    bool quit = false;
+    ByteArray msg_recv;
 
-    while(true)
-    {
-    	ByteArray msg_recv;
+	std::cout << "\nWaiting for 2 new clients..." << std::endl;
 
-        try
-        {
-            FlexWait waiter(2, &theServer, &cinWatcher);
-            Blockable * result = waiter.Wait();
-            if (result == &cinWatcher)
-            {
-                std::string s;
-                std::cin >> s;
-                if (s=="quit")
-                {
-                    // No need to call SocketServer::Shutdown.  It isn't active.
-                    break;
-                }
-                else
-                    continue;
-            }
+	while (!quit) {
+		try {
+			FlexWait waiter(2, &theServer, &cinWatcher);
+			Blockable * result = waiter.Wait();
 
-            std::cout << "\nWaiting for 2 new clients..." << std::endl;
+			if (result == &cinWatcher)
+			{
+				std::string s;
+				std::cin >> s;
+				if (s=="quit")
+				{
+					// No need to call SocketServer::Shutdown.  It isn't active.
+					quit = true;
+					break;
+				}
+				else
+					continue;
+			}
 
-            while (true) {
-				// Accept should not now block.
-				Socket sock = theServer.Accept();
-				std::cout << "Received a socket connection from a client" << std::endl;
+			// Accept should not now block.
+			Socket sock = theServer.Accept();
+			std::cout << "Received a socket connection from a client" << std::endl;
 
-				if (sockets.size() > 0) {
-					sockets.front().Write(ByteArray("CHECK"));
-					int check = sockets.front().Read(msg_recv);
+			if (sockets.size() > 0) {
+				sockets.front().Write(ByteArray("CHECK"));
+				int check = sockets.front().Read(msg_recv);
 
-					if (check == 0) {
-						std::cout << "First client disconnected. Trying to find another client" << std::endl;
+				if (check == 0) {
+					std::cout << "First client disconnected. Trying to find another client" << std::endl;
 
-						sockets.clear();
-						sock.Write(ByteArray("WAIT"));
-						sockets.push_back(sock);
-					} else {
-						sockets.front().Write(ByteArray("RIGHT"));
-						sock.Write(ByteArray("LEFT"));
-						threads.push_back(new CommThread(sockets.at(0), sock));
-						sockets.clear();
-					}
-				} else {
+					sockets.clear();
 					sock.Write(ByteArray("WAIT"));
 					sockets.push_back(sock);
+				} else {
+					sockets.front().Write(ByteArray("RIGHT"));
+					sock.Write(ByteArray("LEFT"));
+					threads.push_back(new CommThread(sockets.at(0), sock));
+					sockets.clear();
 				}
-            }
-        }
-        catch(TerminationException e)
-        {
-            std::cout << "The socket server is no longer listening. Exiting now." << std::endl;
-            break;
-        }
-        catch(std::string s)
-        {
-            std::cout << "thrown " << s << std::endl;
-            break;
-        }
-        catch(...)
-        {
-            std::cout << "caught  unknown exception" << std::endl;
-            break;
-        }
+			} else {
+				sock.Write(ByteArray("WAIT"));
+				sockets.push_back(sock);
+			}
+	    } catch(TerminationException e) {
+			std::cout << "The socket server is no longer listening. Exiting now." << std::endl;
+			break;
+		} catch(std::string s) {
+			std::cout << "thrown " << s << std::endl;
+			break;
+		} catch(...) {
+			std::cout << "caught  unknown exception" << std::endl;
+			break;
+		}
     }
+
+	for(int i = 0; i < sockets.size(); i++) {
+		sockets.at(i).Close();
+	}
+
     for (int i=0;i<threads.size();i++)
         delete threads[i];
 
