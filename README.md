@@ -9,3 +9,7 @@ How To Use
 3. Open up the terminal that will run the first Client.cpp file (Player 1). Type `make Client`, and then `./Client`.
 4. Open up the terminal that will run the second Client.cpp file (Player 2). Type `make Client`, and then `./Client`.
 5. This should start the game. Enjoy!
+
+Notes
+-----------
+This application was meant to run in the command line. It was built and tested using the Terminal in Ubuntu 14.04
