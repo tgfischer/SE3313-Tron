@@ -101,7 +101,7 @@ public:
 int main(void)
 {
     std::cout << "I am a socket server.  Type 'quit' to exit" << std::endl;
-    SocketServer theServer(4321);
+    SocketServer theServer(2000);
     std::vector<CommThread *> threads;
     std::vector<Socket> sockets;
     bool quit = false;

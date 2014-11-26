@@ -17,7 +17,7 @@ int main(void)
 
     try
     {
-        Socket theSocket("172.30.77.210", 4321);
+        Socket theSocket("192.168.0.12", 2000);
         //Socket theSocket("192.168.0.12", 2000);
         theSocket.Open();
         std::string quitGame = "NO";
