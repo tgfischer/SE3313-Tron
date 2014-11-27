@@ -17,7 +17,7 @@ int main(void)
 
     try
     {
-        Socket theSocket("192.168.0.12", 2000);
+        Socket theSocket("104.131.43.58", 2000);
         //Socket theSocket("192.168.0.12", 2000);
         theSocket.Open();
         std::string quitGame = "NO";
@@ -41,12 +41,25 @@ int main(void)
 				dir = message.ToString();
 				ready = "YES";
 			} else if (message.ToString() == "WAIT") {
-				std::cout << "Waiting for another player to join..." << std::endl;
+				std::cout << "Waiting for another player to join. Type 'quit' to exit." << std::endl;
 
-				theSocket.Read(message);
-				theSocket.Write(ByteArray("STILL_HERE"));
-			} else {
+				Blockable* result = waiter.Wait();
+				if (result == &theSocket) {
+					theSocket.Read(message);
+					theSocket.Write(ByteArray("STILL_HERE"));
+				} else {
+					std::string s;
+					std::cin >> s;
 
+					if (s=="quit")
+					{
+						// No need to call SocketServer::Shutdown.  It isn't active.
+						code = 0;
+						break;
+					}
+					else
+						continue;
+				}
 			}
 		}
 

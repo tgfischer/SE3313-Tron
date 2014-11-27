@@ -13,7 +13,7 @@ class CommThread : public Thread
 {
 private:
     Socket socketA, socketB;
-    const static int sleepTime = 500000;
+    const static int sleepTime = 0;
 public:
     CommThread(Socket const& A, Socket const& B) : Thread(true), socketA(A), socketB(B)
     {
@@ -66,6 +66,10 @@ public:
             	} else {
             		grid.update(dirA.ToString(), grid.p1);
             		grid.update(dirB.ToString(), grid.p2);
+
+            		if (grid.p1.x == grid.p2.x && grid.p1.y == grid.p2.y) {
+            			message = "DRAW";
+            		}
             	}
 
             	grid.sendSingleTo(socketA, message);
