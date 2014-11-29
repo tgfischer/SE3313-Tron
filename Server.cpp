@@ -50,8 +50,6 @@ public:
             }
             else
             {
-            	std::cout << dirA.ToString() << " " << dirB.ToString() << std::endl;
-
             	bool p1 = grid.check(dirA.ToString(), grid.p1);
             	bool p2 = grid.check(dirB.ToString(), grid.p2);
 
@@ -71,7 +69,6 @@ public:
             			message = "DRAW";
             		}
             	}
-                std::cout<<message<<std::endl;
             	grid.sendSingleTo(socketA, message);
             	grid.sendSingleTo(socketB, message);
             }
