@@ -17,7 +17,7 @@ int main(void)
 
     try
     {
-        Socket theSocket("104.131.43.58", 2000);
+        Socket theSocket("127.0.0.1", 2000);
         //Socket theSocket("192.168.0.12", 2000);
         theSocket.Open();
         std::string quitGame = "NO";
@@ -78,7 +78,7 @@ int main(void)
 				Blockable* result = waiter.Wait();
 
 				if (result == &theSocket) {
-					grid.recvSingleFrom(theSocket);
+					quitGame = grid.recvSingleFrom(theSocket);
 					theSocket.Write(ByteArray(dir));
 					quitGame = grid.recvSingleFrom(theSocket);
 
@@ -107,8 +107,10 @@ int main(void)
 			}
 
 			bt.on();
-
-			std::cout << quitGame << std::endl;
+            if(quitGame.size() == 1)
+                std::cout << "Other Player Quit - You Win!"<<std::endl;
+            else
+			    std::cout << quitGame << std::endl;
 			theSocket.Close();
 		}
     }

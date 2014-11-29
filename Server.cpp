@@ -71,7 +71,7 @@ public:
             			message = "DRAW";
             		}
             	}
-
+                std::cout<<message<<std::endl;
             	grid.sendSingleTo(socketA, message);
             	grid.sendSingleTo(socketB, message);
             }
